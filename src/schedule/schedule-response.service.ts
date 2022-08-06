@@ -3,6 +3,7 @@ import { ScheduleDto } from './schedule.dto';
 import { Schedule } from './schedule.model';
 import { ProducerService } from '../kafka/producer.service';
 import { OrderEvent } from './event.model';
+import { MESSAGES } from '@nestjs/core/constants';
 
 
 @Injectable()
@@ -15,11 +16,13 @@ export class ScheduleResponseService {
         await this.producerService.produce({
             topic:'schedule-topic',
             messages: [{
-                key: 'pagamentos', value: JSON.stringify({"abc":"sd"}),
+                key: 'eventsend', value: JSON.stringify(event),
             
             },],
         });
+
         return 'Hello World...!';
+        
     }
 
 }

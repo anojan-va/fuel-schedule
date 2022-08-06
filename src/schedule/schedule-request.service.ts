@@ -19,28 +19,24 @@ export class ScheduleRequestService implements OnModuleInit {
         await this.consumerService.consume(
             { topic: 'allocation-topic'},
             {
-              eachMessage: async ({ topic, partition, message }) => {
+                eachMessage: async ({ topic, partition, message }) => {
 
                 let event:OrderEvent;
-                
 
-                
-
-                const tr = message.value as any;
-                event = JSON.parse(tr);
-
-                let eventUpdated =new OrderEvent("","",);
+                const eventObj = message.value as any;
+                event = JSON.parse(eventObj);
 
 
+                this.scheduleDto= new ScheduleDto(event.order.orderId,event.order.gasStationId,event.order.fuelType,event.order.quantity)
+                const schdulereturn = this.scheduleService.createSchedule(this.scheduleDto);
+                var schduledId = (await schdulereturn).schduleId;
+                console.log(schduledId);
+                let orderUpdated = new Order(event.order.orderId,event.order.gasStationId,event.order.fuelType,event.order.quantity,event.order.orderStatus,event.order.statusDate,event.order.allocationId,4,event.order.dispatchId,event.order.deliveryId);
+                let eventUpdated =new OrderEvent("Dispatch Request Received","Sucess.!",orderUpdated);
 
 
 
-              this.scheduleDto= new ScheduleDto(event.order.orderId,event.order.gasStationId,event.order.fuelType,event.order.quantity)
-              this.scheduleService.createSchedule(this.scheduleDto);
-
-              let order:Order;
-
-              this.scheduleResponseService.scheduleResponse(event);
+                this.scheduleResponseService.scheduleResponse(eventUpdated);
 
                // console.log(this.scheduleDto.toString());
                 console.log(this.scheduleDto.gasStationId);
