@@ -13,7 +13,7 @@ export class ScheduleService {
     private schedule:Schedule[]=[];
 
     getScheduleList(){
-        return this.schedule;
+        return this.scheduleRepository.find();
     }
 
 
